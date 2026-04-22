@@ -1,0 +1,199 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block content %}
+
+<div id="content-main" class="admin-dashboard-container">
+    
+    <!-- Header Card -->
+    <div class="header-card module">
+        <h2>🚀 QRTendify Global Metrics</h2>
+        <p>Quick overview of the application's performance.</p>
+    </div>
+
+    <!-- 1. Overall Totals Cards -->
+    <div class="summary-cards totals-grid">
+        <div class="module summary-card border-success">
+            <h3>Total Users</h3>
+            <p class="metric text-success">{{ total_users }}</p>
+        </div>
+        <div class="module summary-card border-info">
+            <h3>Total Organizations</h3>
+            <p class="metric text-info">{{ total_orgs }}</p>
+        </div>
+        <div class="module summary-card border-primary">
+            <h3>Total Sessions</h3>
+            <p class="metric text-primary">{{ total_sessions }}</p>
+        </div>
+    </div>
+
+    <!-- 2. Breakdown Tables -->
+    <div class="stats-grid">
+        
+        <!-- Session Status Breakdown -->
+        <div class="module session-status-card">
+            <h2>Session Status Breakdown</h2>
+            <table>
+                <thead>
+                    <tr><th>Status</th><th>Count</th></tr>
+                </thead>
+                <tbody>
+                    {% for status, count in sessions_status.items %}
+                    <tr>
+                        <td class="font-semibold text-status-{{ status|lower }}">{{ status }}</td>
+                        <td class="font-bold">{{ count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Membership and Registration Details -->
+        <div class="module membership-reg-card">
+            <h2>Membership & Registration</h2>
+            <table>
+                <tr><th>Active Members</th><td class="font-bold">{{ active_memberships }}</td></tr>
+                <tr><th>Pending Invites</th><td class="font-bold text-warning">{{ pending_memberships }}</td></tr>
+            </table>
+            
+            <h3 class="mt-4">User Signup Method</h3>
+            <table>
+                <tr><th>Social (SSO)</th><td class="font-bold text-info">{{ social_users }}</td></tr>
+                <tr><th>Manual (Email/Password)</th><td class="font-bold">{{ manual_users }}</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- 3. Recent Security Log -->
+    <div class="module security-log-card">
+        <h2>Recent User Activity (Admin Actions)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in recent_activity %}
+                <tr>
+                    <td>{{ log.action_time|date:"Y-m-d H:i:s" }}</td>
+                    <td>{{ log.user.email|default:log.user.username }}</td>
+                    <td class="font-bold text-action-{{ log.is_deletion|yesno:'danger,addition' }}">
+                        {% if log.is_addition %}Added{% elif log.is_change %}Changed{% elif log.is_deletion %}Deleted{% endif %}
+                    </td>
+                    <td style="font-style: italic;">{{ log.get_change_message|default:"No details provided."|truncatechars:50 }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align:center;">No recent actions found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- Custom Admin Dashboard Styles -->
+<style>
+    /* Admin Reset and Base */
+    #content-main {
+        padding: 20px;
+    }
+    .module {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    /* Variable Mapping (simplified) */
+    .text-primary { color: #6a00ff; }
+    .text-success { color: #28a745; }
+    .text-info { color: #007bff; }
+    .text-warning { color: #ffc107; }
+    .text-danger { color: #dc3545; }
+
+    /* Header */
+    .header-card {
+        background-color: var(--primary-color, #6a00ff);
+        color: white;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    .header-card h2 {
+        color: white;
+        margin: 0;
+    }
+
+    /* Summary Cards */
+    .totals-grid {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .summary-card {
+        flex: 1;
+        text-align: center;
+        padding: 20px;
+        border-left: 5px solid;
+    }
+    .summary-card h3 {
+        font-size: 1rem;
+        margin-bottom: 5px;
+    }
+    .metric {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0;
+    }
+    .border-success { border-left-color: #28a745; }
+    .border-info { border-left-color: #007bff; }
+    .border-primary { border-left-color: #6f42c1; }
+
+    /* Tables */
+    .stats-grid {
+        display: flex;
+        gap: 20px;
+    }
+    .session-status-card, .membership-reg-card {
+        flex: 1;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+    table th, table td {
+        padding: 8px 10px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    table th {
+        background-color: #f1f1f1;
+        font-weight: 600;
+    }
+
+    /* Status Colors in Tables */
+    .text-status-open { color: #28a745; }
+    .text-status-closed { color: #dc3545; }
+    .text-status-scheduled { color: #ffc107; }
+
+    /* Action Colors in Log */
+    .text-action-danger { color: #dc3545; } /* Deletion */
+    .text-action-addition { color: #28a745; } /* Addition */
+    .text-action-false { color: #ffc107; } /* Change (false value for is_deletion) */
+    
+    /* Responsiveness */
+    @media (max-width: 900px) {
+        .totals-grid, .stats-grid {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}

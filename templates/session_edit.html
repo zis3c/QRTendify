@@ -1,0 +1,125 @@
+{% extends "dashboard_base.html" %}
+{% load widget_tweaks %}
+
+{% block dashboard_content %}
+<div class="mx-auto max-w-5xl space-y-6">
+    <div class="app-card">
+        <h1 class="app-title">Edit Session</h1>
+        <p class="app-subtitle">Update the schedule, status, access rules, and attendance settings.</p>
+    </div>
+
+    <form method="POST" class="space-y-6">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="app-alert-danger">
+            {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="app-card">
+            <h2 class="mb-4 text-lg font-semibold text-slate-900">Basic Information</h2>
+
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div class="md:col-span-2">
+                    <label class="app-label" for="{{ form.title.id_for_label }}">Title</label>
+                    {{ form.title|add_class:"app-input" }}
+                    {% if form.title.errors %}<p class="mt-1 text-xs text-red-600">{{ form.title.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="app-label" for="{{ form.description.id_for_label }}">Description</label>
+                    {{ form.description|add_class:"app-input" }}
+                    {% if form.description.errors %}<p class="mt-1 text-xs text-red-600">{{ form.description.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div>
+                    <label class="app-label" for="{{ form.status.id_for_label }}">Session Status</label>
+                    {{ form.status|add_class:"app-input" }}
+                    {% if form.status.errors %}<p class="mt-1 text-xs text-red-600">{{ form.status.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div>
+                    <label class="app-label" for="{{ form.schedule_opening.id_for_label }}">Scheduled Opening</label>
+                    {{ form.schedule_opening|add_class:"app-input" }}
+                    {% if form.schedule_opening.errors %}<p class="mt-1 text-xs text-red-600">{{ form.schedule_opening.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div>
+                    <label class="app-label" for="{{ form.start_time.id_for_label }}">Start Time</label>
+                    {{ form.start_time|add_class:"app-input" }}
+                    {% if form.start_time.errors %}<p class="mt-1 text-xs text-red-600">{{ form.start_time.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div>
+                    <label class="app-label" for="{{ form.end_time.id_for_label }}">End Time</label>
+                    {{ form.end_time|add_class:"app-input" }}
+                    {% if form.end_time.errors %}<p class="mt-1 text-xs text-red-600">{{ form.end_time.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="app-card">
+            <h2 class="mb-4 text-lg font-semibold text-slate-900">Attendance Settings</h2>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                    <label class="app-label" for="{{ form.qr_type.id_for_label }}">QR Code Type</label>
+                    {{ form.qr_type|add_class:"app-input" }}
+                    {% if form.qr_type.errors %}<p class="mt-1 text-xs text-red-600">{{ form.qr_type.errors.0 }}</p>{% endif %}
+                </div>
+
+                {% if form.check_in_window_minutes %}
+                <div>
+                    <label class="app-label" for="{{ form.check_in_window_minutes.id_for_label }}">Check-in Grace Period</label>
+                    {{ form.check_in_window_minutes|add_class:"app-input" }}
+                    {% if form.check_in_window_minutes.errors %}<p class="mt-1 text-xs text-red-600">{{ form.check_in_window_minutes.errors.0 }}</p>{% endif %}
+                </div>
+                {% endif %}
+
+                <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                    <label class="inline-flex items-start gap-3 text-sm text-slate-700" for="{{ form.is_location_required.id_for_label }}">
+                        {{ form.is_location_required }}
+                        <span>
+                            <span class="font-semibold text-slate-900">Require Location Verification</span>
+                            {% if form.is_location_required.help_text %}
+                            <span class="mt-1 block text-xs text-slate-500">{{ form.is_location_required.help_text }}</span>
+                            {% endif %}
+                        </span>
+                    </label>
+                    {% if form.is_location_required.errors %}<p class="mt-1 text-xs text-red-600">{{ form.is_location_required.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="app-card">
+            <h2 class="mb-4 text-lg font-semibold text-slate-900">Access Control</h2>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                    <label class="app-label" for="{{ form.access_type.id_for_label }}">Access Type</label>
+                    {{ form.access_type|add_class:"app-input" }}
+                    {% if form.access_type.errors %}<p class="mt-1 text-xs text-red-600">{{ form.access_type.errors.0 }}</p>{% endif %}
+                </div>
+                <div>
+                    <label class="app-label" for="{{ form.email_domain.id_for_label }}">Allowed Email Domain</label>
+                    {{ form.email_domain|add_class:"app-input" }}
+                    {% if form.email_domain.help_text %}<p class="mt-1 text-xs text-slate-500">{{ form.email_domain.help_text }}</p>{% endif %}
+                    {% if form.email_domain.errors %}<p class="mt-1 text-xs text-red-600">{{ form.email_domain.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-3 sm:flex-row">
+            <button type="submit" class="app-btn-primary">Save Changes</button>
+            <a href="{% url 'session_detail' pk=object.pk %}" class="app-btn-secondary">Back to Session</a>
+            <button type="submit"
+                    class="app-btn-danger sm:ml-auto"
+                    formnovalidate
+                    formaction="{% url 'session_delete' pk=object.pk %}">
+                Delete Session
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

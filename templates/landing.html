@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<header
+    class="flex justify-between items-center px-4 md:px-6 py-2 bg-black/90 backdrop-blur-md fixed w-full top-0 z-50 border-b border-white/10 transition-all duration-300">
+    <a href="{% url 'landing_page' %}" class="inline-flex items-center gap-3 group bg-transparent px-3 py-2">
+        <img src="{% static 'images/logo_QRTendify.svg' %}" alt="QRTendify logo"
+            class="h-8 md:h-10 w-auto object-contain logo-white" />
+        <span class="text-base md:text-lg font-bold text-white tracking-tight truncate">QRTendify</span>
+    </a>
+
+    <nav>
+        <ul class="flex list-none p-0 m-0 space-x-3">
+            <li>
+                <a href="{% url 'login' %}"
+                    class="nav-login px-4 py-2 text-sm font-semibold rounded-lg transition duration-150 hover:bg-white/5">
+                    Login
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'register' %}"
+                    class="nav-register px-4 py-2 text-sm font-semibold rounded-lg shadow-sm transition duration-150">
+                    Register
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<!-- Hero Section -->
+<section
+    class="relative bg-black text-white py-20 md:py-32 min-h-screen flex flex-col justify-center items-center overflow-hidden">
+    <!-- Animated Background Elements -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-10 -left-10 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-10 -right-10 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl"></div>
+        <div
+            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white/5 rounded-full blur-3xl">
+        </div>
+    </div>
+
+    <div class="relative content-container px-6 sm:px-8 max-w-5xl mx-auto text-center">
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 drop-shadow-sm" data-scroll-animation>
+            The Secure, <span
+                class="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-cyan-200">Anti-Fraud</span>
+            Attendance Solution
+        </h1>
+
+        <p class="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed" data-scroll-animation
+            data-delay="100">
+            Stop seeking proxies. QRTendify combines dynamic QR codes, GPS verification, and device fingerprinting to
+            ensure 100% authentic attendance for universities and corporate events.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center" data-scroll-animation data-delay="200">
+            <a href="{% url 'register' %}"
+                class="w-full sm:w-auto px-8 py-4 bg-white text-blue-700 font-bold rounded-xl shadow-xl hover:shadow-2xl hover:bg-blue-50 transform hover:-translate-y-1 transition-all duration-200 text-lg flex items-center justify-center"
+                style="text-decoration: none; color: #1d4ed8;">
+                Get Started for Free
+                <svg class="w-5 h-5 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6">
+                    </path>
+                </svg>
+            </a>
+
+
+        </div>
+    </div>
+
+    <!-- Scroll Indicator (Absolute Bottom Right) -->
+    <!-- Scroll Indicator (Absolute Bottom Right - Wrapped to avoid Flex Centering) -->
+    <div class="absolute inset-0 pointer-events-none z-20 overflow-hidden">
+        <a href="#features" id="scroll-indicator"
+            class="absolute bottom-10 right-6 md:right-10 pointer-events-auto group flex items-center justify-center w-14 h-14 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full cursor-pointer hover:bg-white/10 transition-all duration-300 hover:scale-110 shadow-lg shadow-black/5">
+            <div class="animate-bounce">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 14l-7 7m0 0l-7-7m7 7V3">
+                    </path>
+                </svg>
+            </div>
+        </a>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features"
+    class="relative min-h-screen scroll-mt-10 bg-gray-50 text-gray-900 py-16 px-4 flex flex-col justify-center">
+    <div class="max-w-7xl mx-auto w-full">
+
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-stretch gap-3">
+            {% with features=feature_data %}
+
+            <!-- Feature 1 -->
+            <div class="group h-full">
+                <div class="p-1 h-full">
+                    <div
+                        class="bg-white p-5 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 h-full flex flex-col justify-between group-hover:-translate-y-1">
+                        <div class="flex-1">
+                            <div
+                                class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-4 border border-blue-100">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3">Dynamic & Static QR Codes</h3>
+                            <p class="text-gray-600 mb-4 leading-relaxed">
+                                Choose between reusable static codes or time-expiring dynamic QR codes that refresh
+                                every 120 seconds for maximum security.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-100">
+                            <p class="text-sm text-blue-600 font-medium flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Perfect for exams & events
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="group h-full">
+                <div class="p-1 h-full">
+                    <div
+                        class="bg-white p-5 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 h-full flex flex-col justify-between group-hover:-translate-y-1">
+                        <div class="flex-1">
+                            <div
+                                class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-4 border border-blue-100">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3">Location Verification</h3>
+                            <p class="text-gray-600 mb-4 leading-relaxed">
+                                Real-time GPS location collection with VPN/proxy detection to ensure attendees are
+                                physically present.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-100">
+                            <p class="text-sm text-blue-600 font-medium flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                No fake submissions
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="group h-full">
+                <div class="p-1 h-full">
+                    <div
+                        class="bg-white p-5 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 h-full flex flex-col justify-between group-hover:-translate-y-1">
+                        <div class="flex-1">
+                            <div
+                                class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-4 border border-blue-100">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3">Flexible Grace Periods</h3>
+                            <p class="text-gray-600 mb-4 leading-relaxed">
+                                Set custom grace periods (5, 10, 30 minutes) to accommodate delays while maintaining
+                                control.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-100">
+                            <p class="text-sm text-blue-600 font-medium flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Control punctuality
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="group h-full">
+                <div class="p-1 h-full">
+                    <div
+                        class="bg-white p-5 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 h-full flex flex-col justify-between group-hover:-translate-y-1">
+                        <div class="flex-1">
+                            <div
+                                class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-4 border border-blue-100">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3">Email Domain Control</h3>
+                            <p class="text-gray-600 mb-4 leading-relaxed">
+                                Restrict access to specific email domains to keep your sessions exclusive and secure.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-100">
+                            <p class="text-sm text-blue-600 font-medium flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                    </path>
+                                </svg>
+                                Exclusive access
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 5 -->
+            <div class="group h-full">
+                <div class="p-1 h-full">
+                    <div
+                        class="bg-white p-5 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 h-full flex flex-col justify-between group-hover:-translate-y-1">
+                        <div class="flex-1">
+                            <div
+                                class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-4 border border-blue-100">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3">Real-Time Dashboard</h3>
+                            <p class="text-gray-600 mb-4 leading-relaxed">
+                                Monitor attendance live with intuitive dashboards and generate instant PDF reports.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-100">
+                            <p class="text-sm text-blue-600 font-medium flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                </svg>
+                                Instant insights
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 6 -->
+            <div class="group h-full">
+                <div class="p-1 h-full">
+                    <div
+                        class="bg-white p-5 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 h-full flex flex-col justify-between group-hover:-translate-y-1">
+                        <div class="flex-1">
+                            <div
+                                class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-4 border border-blue-100">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3">SSO & Manual Integration</h3>
+                            <p class="text-gray-600 mb-4 leading-relaxed">
+                                Google/Microsoft SSO for organizers with 4-digit code fallback for universal
+                                accessibility.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-100">
+                            <p class="text-sm text-blue-600 font-medium flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                                    </path>
+                                </svg>
+                                Universal login
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endwith %}
+        </div>
+
+        <!-- Scroll Animation Script -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Simple scroll animation implementation
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const element = entry.target;
+                            const delay = element.getAttribute('data-delay') || 0;
+
+                            setTimeout(() => {
+                                element.style.opacity = '1';
+                                element.style.transform = 'translateY(0)';
+                            }, delay);
+
+                            observer.unobserve(element);
+                        }
+                    });
+                }, observerOptions);
+
+                // Initialize elements with scroll animation
+                document.querySelectorAll('[data-scroll-animation]').forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(30px)';
+                    el.style.transition = 'all 0.6s ease-out';
+                    observer.observe(el);
+                });
+
+                // Header scroll effect: toggle .scrolled on header
+                const header = document.querySelector('header');
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 100) {
+                        header.classList.add('scrolled');
+                    } else {
+                        header.classList.remove('scrolled');
+                    }
+                });
+
+
+            });
+        </script>
+
+        <style>
+            header {
+                --primary: #116fcf;
+                background: transparent;
+                /* transparent on black hero */
+            }
+
+            header .nav-login {
+                color: #ffffff;
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                background: transparent;
+            }
+
+            header .nav-register {
+                color: #ffffff;
+                background: #116fcf;
+                border: 1px solid #116fcf;
+            }
+
+            header .nav-register:hover {
+                background: #0e5bbf;
+                border-color: #0e5bbf;
+            }
+
+            /* SCROLLED STATE: Keep navbar BLACK */
+            header.scrolled {
+                background: rgba(0, 0, 0, 0.9);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            /* Logo stays white */
+            header.scrolled .logo-white {
+                filter: brightness(0) invert(1);
+            }
+
+            header.scrolled span {
+                color: #ffffff;
+            }
+
+            header.scrolled .nav-login {
+                color: #ffffff;
+                border-color: rgba(255, 255, 255, 0.2);
+                background: transparent;
+            }
+
+            header.scrolled .nav-login:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            header.scrolled .nav-register {
+                color: #ffffff;
+                background: #116fcf;
+                border-color: #116fcf;
+            }
+
+            header.scrolled .nav-register:hover {
+                background: #0e5bbf;
+            }
+
+            /* Force logo to be white initially */
+            .logo-white {
+                filter: brightness(0) invert(1);
+            }
+        </style>
+
+        {% endblock %}

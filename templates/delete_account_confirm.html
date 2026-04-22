@@ -1,0 +1,35 @@
+{% extends "dashboard_base.html" %}
+
+{% block dashboard_content %}
+<div class="mx-auto max-w-3xl space-y-5">
+    <div class="app-card">
+        <h2 class="app-title">Delete Account</h2>
+        <p class="app-subtitle">
+            This action is permanent and cannot be reversed.
+        </p>
+    </div>
+
+    <div class="app-alert-danger">
+        <h3 class="mb-2 text-base font-semibold">Warning: This action is permanent.</h3>
+        <p class="mb-2">When you delete your account, the following data is removed:</p>
+        <ul class="list-disc space-y-1 pl-5">
+            <li>Your user profile and login credentials.</li>
+            <li>Organizations where you are the only owner.</li>
+            <li>Sessions and attendance records in those organizations.</li>
+            <li>Your membership links in other organizations.</li>
+        </ul>
+    </div>
+
+    <div class="app-card">
+        <form method="POST" action="{% url 'delete_account' %}" class="flex flex-col gap-3 sm:flex-row sm:items-center">
+            {% csrf_token %}
+            <button type="submit" class="app-btn-danger">
+                Yes, delete my account
+            </button>
+            <a href="{% url 'settings' %}" class="app-btn-secondary">
+                Cancel
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

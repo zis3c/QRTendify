@@ -1,0 +1,138 @@
+{% comment %}
+This is the certificate management section to be added to session_detail.html
+Insert this AFTER the main content grid (after line 234) and BEFORE the {% endblock %}
+{% endcomment %}
+
+    <!-- Certificate Management Section -->
+    <div class="mt-4 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                </svg>
+                Certificate Management
+            </h3>
+            {% if has_template %}
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    ✓ Template Configured
+                </span>
+            {% else %}
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    No Template
+                </span>
+            {% endif %}
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <!-- Left: Upload/Configure Template -->
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="text-sm font-semibold text-gray-700 mb-3">
+                    {% if has_template %}Update{% else %}Upload{% endif %} Certificate Template
+                </h4>
+                
+                <form method="POST" enctype="multipart/form-data" class="space-y-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="upload_certificate">
+                    
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">PDF Template</label>
+                        {{ certificate_form.template_file }}
+                        <p class="mt-1 text-xs text-gray-500">{{ certificate_form.template_file.help_text }}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Name X Position</label>
+                            {{ certificate_form.name_x_position }}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Name Y Position</label>
+                            {{ certificate_form.name_y_position }}
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Font</label>
+                            {{ certificate_form.font_name }}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Size</label>
+                            {{ certificate_form.font_size }}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Color</label>
+                            {{ certificate_form.font_color }}
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-lg transition-colors">
+                        {% if has_template %}Update Template{% else %}Upload Template{% endif %}
+                    </button>
+                </form>
+
+                {% if certificate_template %}
+                <div class="mt-3 p-2 bg-gray-50 rounded text-xs text-gray-600">
+                    <strong>Current:</strong> {{ certificate_template.template_file.name|default:"No file" }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Right: Certificate Status & Actions -->
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="text-sm font-semibold text-gray-700 mb-3">Certificate Actions</h4>
+                
+                {% if not has_template %}
+                    <div class="text-center py-8">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <p class="mt-2 text-sm text-gray-500">Upload a template first to enable automatic certificate generation</p>
+                    </div>
+                {% else %}
+                    <div class="space-y-3">
+                        <div class="p-3 bg-blue-50 rounded-lg">
+                            <p class="text-xs text-blue-900">
+                                <strong>Auto-Generation:</strong> Certificates are automatically generated and emailed when attendees check in.
+                            </p>
+                        </div>
+
+                        {% if attendees.count > 0 %}
+                        <form method="POST" onsubmit="return confirm('Resend certificates to ALL attendees?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="resend_all_certificates">
+                            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 rounded-lg transition-colors flex items-center justify-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76"></path>
+                                </svg>
+                                Resend All Certificates ({{ attendees.count }})
+                            </button>
+                        </form>
+
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <p><strong>Certificate Status:</strong></p>
+                            <ul class="list-disc list-inside space-y-1 pl-2">
+                                {% for item in attendees_with_certs %}
+                                    <li>
+                                        {{ item.record.user.email }} - 
+                                        {% if item.cert_status.has_cert %}
+                                            {% if item.cert_status.email_sent %}
+                                                <span class="text-green-600">✓ Sent</span>
+                                            {% else %}
+                                                <span class="text-orange-600">⚠ Generated, not sent</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-gray-500">Not generated</span>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% else %}
+                        <p class="text-sm text-gray-500 text-center py-4">No attendees yet</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>

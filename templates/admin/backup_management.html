@@ -1,0 +1,43 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+<div class="module">
+    <h2>📦 Database Backups</h2>
+    
+    <div class="form-row">
+        <a href="{% url 'admin:dbbackup' %}" class="button">Create New Backup</a>
+        <a href="{% url 'admin:dbbackup_cleanup' %}" class="button">Cleanup Old Backups</a>
+    </div>
+
+    <div class="module">
+        <h3>Recent Backups</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Filename</th>
+                    <th>Size</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for backup in backups %}
+                <tr>
+                    <td>{{ backup.filename }}</td>
+                    <td>{{ backup.size|filesizeformat }}</td>
+                    <td>{{ backup.date }}</td>
+                    <td>
+                        <a href="{% url 'admin:dbbackup_download' backup.filename %}" class="button">Download</a>
+                        <a href="{% url 'admin:dbbackup_restore' backup.filename %}" class="button" onclick="return confirm('Restore this backup?')">Restore</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No backups found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

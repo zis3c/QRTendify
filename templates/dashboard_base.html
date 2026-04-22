@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script>
+    (function () {
+        try {
+            const collapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            document.documentElement.setAttribute('data-sidebar-collapsed', collapsed ? '1' : '0');
+        } catch (e) {
+            document.documentElement.setAttribute('data-sidebar-collapsed', '0');
+        }
+    })();
+</script>
+<div class="dashboard-wrapper flex min-h-screen flex-col md:flex-row"
+     x-data="dashboardShell()"
+     x-init="syncSidebarAttr()"
+     @online.window="handleOnline()"
+     @offline.window="handleOffline()">
+     
+    {% include "sidebar.html" %}
+    
+    <div x-cloak
+        x-show="showOfflineBanner"
+        x-transition:enter="transition ease-out duration-500"
+        x-transition:enter-start="-translate-y-full opacity-0"
+        x-transition:enter-end="translate-y-0 opacity-100"
+        x-transition:leave="transition ease-in duration-400"
+        x-transition:leave-start="translate-y-0 opacity-100"
+        x-transition:leave-end="-translate-y-full opacity-0"
+        class="fixed left-0 right-0 top-0 z-50 transform bg-red-600 p-3 text-center text-white shadow-lg transition-all"
+        :class="sidebarCollapsed ? 'md:left-[4.5rem]' : 'md:left-60'">
+        <div class="max-w-7xl mx-auto flex items-center justify-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+            </svg>
+            <span class="font-medium">You are currently offline. Check your connection.</span>
+        </div>
+    </div>
+
+    <div class="dashboard-content min-h-screen flex-1 overflow-x-hidden overflow-y-auto bg-[#f2f2f6] p-4 md:p-8">
+        {% block dashboard_content %}
+        {% endblock %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function dashboardShell() {
+        const savedCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        return {
+            sidebarCollapsed: savedCollapsed,
+            showOfflineBanner: false,
+            isOnline: navigator.onLine,
+            offlineTimer: null,
+
+            syncSidebarAttr() {
+                document.documentElement.setAttribute('data-sidebar-collapsed', this.sidebarCollapsed ? '1' : '0');
+            },
+
+            toggleSidebar() {
+                this.sidebarCollapsed = !this.sidebarCollapsed;
+                localStorage.setItem('sidebarCollapsed', this.sidebarCollapsed ? 'true' : 'false');
+                this.syncSidebarAttr();
+            },
+
+            handleOnline() {
+                this.isOnline = true;
+                this.showOfflineBanner = false;
+                if (this.offlineTimer) {
+                    clearTimeout(this.offlineTimer);
+                }
+            },
+
+            handleOffline() {
+                this.isOnline = false;
+                if (this.offlineTimer) {
+                    clearTimeout(this.offlineTimer);
+                }
+
+                // Avoid false offline flashes during page transitions.
+                this.offlineTimer = setTimeout(() => {
+                    if (!navigator.onLine) {
+                        this.showOfflineBanner = true;
+                    }
+                }, 1200);
+            }
+        };
+    }
+</script>
+<style>
+    @media (min-width: 768px) {
+        .sidebar-nav {
+            transition: width 0.2s ease;
+        }
+
+        .dashboard-content {
+            transition: margin-left 0.2s ease;
+        }
+
+        html[data-sidebar-collapsed="1"] .sidebar-nav {
+            width: 4.5rem;
+        }
+
+        html[data-sidebar-collapsed="0"] .sidebar-nav {
+            width: 15rem;
+        }
+
+        html[data-sidebar-collapsed="1"] .dashboard-content {
+            margin-left: 4.5rem;
+        }
+
+        html[data-sidebar-collapsed="0"] .dashboard-content {
+            margin-left: 15rem;
+        }
+    }
+</style>
+{% endblock %}

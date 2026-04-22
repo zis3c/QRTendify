@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col justify-center bg-[#f2f2f6] px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto w-full max-w-md">
+        <div class="bg-white py-6 px-4 shadow-xl border border-gray-100 rounded-2xl sm:px-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Welcome, {{ user.first_name }}!</h1>
+                <p class="mt-2 text-sm text-gray-600">Set up your organization profile to continue.</p>
+            </div>
+
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-md mb-4">
+                    {% for error in form.non_field_errors %}
+                    <p class="text-sm text-red-700">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div>
+                    <label for="{{ form.organization_name.id_for_label }}" class="block text-sm font-medium text-gray-700">Organization Name</label>
+                    <div class="mt-1">
+                        <input type="text"
+                               name="{{ form.organization_name.name }}"
+                               id="{{ form.organization_name.id_for_label }}"
+                               value="{{ form.organization_name.value|default:'' }}"
+                               class="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-200"
+                               placeholder="e.g. Acme Corp, University of Technology"
+                               required>
+                    </div>
+                    {% if form.organization_name.errors %}
+                    <p class="mt-1 text-xs text-red-600">{{ form.organization_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ form.job_title.id_for_label }}" class="block text-sm font-medium text-gray-700">Role</label>
+                    <div class="mt-1" x-data="{ open: false, selectedValue: '{{ form.job_title.value|default:''|escapejs }}', selectedLabel: '{% for value, label in form.job_title.field.choices %}{% if form.job_title.value == value %}{{ label|escapejs }}{% endif %}{% endfor %}' }">
+                        <input type="hidden" name="{{ form.job_title.name }}" :value="selectedValue" required>
+                        <button type="button"
+                                @click="open = !open"
+                                @keydown.escape.window="open = false"
+                                class="w-full inline-flex items-center justify-between px-3 py-3 border border-gray-300 rounded-xl shadow-sm bg-white text-sm text-gray-800 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                            <span class="truncate" x-text="selectedLabel || 'Select your role'"></span>
+                            <svg class="h-4 w-4 text-slate-500 transition-transform duration-200" :class="open ? 'rotate-180' : ''" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <path d="M6 8l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                        </button>
+                        <div x-show="open" x-cloak @click.outside="open = false" class="relative z-20">
+                            <div class="absolute mt-2 w-full max-h-32 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg">
+                                {% for value, label in form.job_title.field.choices %}
+                                {% if value %}
+                                <button type="button"
+                                        @click="selectedValue = '{{ value|escapejs }}'; selectedLabel = '{{ label|escapejs }}'; open = false"
+                                        class="w-full px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150"
+                                        :class="selectedValue === '{{ value|escapejs }}' ? 'bg-blue-50 text-blue-700 font-semibold' : ''">
+                                    {{ label }}
+                                </button>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% if form.job_title.errors %}
+                    <p class="mt-1 text-xs text-red-600">{{ form.job_title.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <button type="submit"
+                            class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:-translate-y-0.5">
+                        Save and Continue
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

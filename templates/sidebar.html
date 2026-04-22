@@ -1,0 +1,104 @@
+{% with current=request.resolver_match.url_name %}
+<div class="sidebar-nav hidden h-full border-r border-slate-800 bg-black p-3 md:fixed md:inset-y-0 md:z-20 md:block">
+    <div class="mb-4 flex items-center"
+         :class="sidebarCollapsed ? 'justify-center' : 'justify-between'">
+        <h2 class="text-lg font-bold text-white transition-opacity duration-150"
+            x-show="!sidebarCollapsed" x-cloak>QRTendify</h2>
+        <button type="button"
+                class="inline-flex items-center justify-center rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition duration-150"
+                :class="sidebarCollapsed ? 'h-10 w-10 mx-auto' : 'h-9 w-9'"
+                @click="toggleSidebar()"
+                aria-label="Toggle sidebar">
+            <svg x-show="!sidebarCollapsed" x-cloak class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            <svg x-show="sidebarCollapsed" x-cloak class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </button>
+    </div>
+
+    <nav class="mt-2">
+        <ul class="m-0 list-none space-y-1.5 p-0">
+            <li>
+                <a href="{% url 'dashboard' %}" class="group nav-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition duration-150 {% if current == 'dashboard' %}bg-sky-500/20 text-sky-200{% else %}text-slate-200 hover:bg-slate-800 hover:text-sky-200{% endif %}"
+                   :class="sidebarCollapsed ? 'mx-auto h-10 w-10 justify-center gap-0 px-0 py-0' : ''">
+                    <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M4 10v10h6v-6h4v6h6V10"></path></svg>
+                    <span :class="sidebarCollapsed ? 'hidden' : 'inline'">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'session_list' %}" class="group nav-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition duration-150 {% if current == 'session_list' %}bg-sky-500/20 text-sky-200{% else %}text-slate-200 hover:bg-slate-800 hover:text-sky-200{% endif %}"
+                   :class="sidebarCollapsed ? 'mx-auto h-10 w-10 justify-center gap-0 px-0 py-0' : ''">
+                    <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M5 11h14M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span :class="sidebarCollapsed ? 'hidden' : 'inline'">Sessions</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'create_session' %}" class="group nav-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition duration-150 {% if current == 'create_session' %}bg-sky-500/20 text-sky-200{% else %}text-slate-200 hover:bg-slate-800 hover:text-sky-200{% endif %}"
+                   :class="sidebarCollapsed ? 'mx-auto h-10 w-10 justify-center gap-0 px-0 py-0' : ''">
+                    <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m-7-7h14"></path></svg>
+                    <span :class="sidebarCollapsed ? 'hidden' : 'inline'">Create Session</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'reports' %}" class="group nav-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition duration-150 {% if current == 'reports' %}bg-sky-500/20 text-sky-200{% else %}text-slate-200 hover:bg-slate-800 hover:text-sky-200{% endif %}"
+                   :class="sidebarCollapsed ? 'mx-auto h-10 w-10 justify-center gap-0 px-0 py-0' : ''">
+                    <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-5m3 5V7m4 13H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2z"></path></svg>
+                    <span :class="sidebarCollapsed ? 'hidden' : 'inline'">Reports</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'certificate_list' %}" class="group nav-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition duration-150 {% if current == 'certificate_list' %}bg-sky-500/20 text-sky-200{% else %}text-slate-200 hover:bg-slate-800 hover:text-sky-200{% endif %}"
+                   :class="sidebarCollapsed ? 'mx-auto h-10 w-10 justify-center gap-0 px-0 py-0' : ''">
+                    <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16v12H4zM8 10h8M8 14h5"></path></svg>
+                    <span :class="sidebarCollapsed ? 'hidden' : 'inline'">Certificates</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'settings' %}" class="group nav-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition duration-150 {% if current == 'settings' %}bg-sky-500/20 text-sky-200{% else %}text-slate-200 hover:bg-slate-800 hover:text-sky-200{% endif %}"
+                   :class="sidebarCollapsed ? 'mx-auto h-10 w-10 justify-center gap-0 px-0 py-0' : ''">
+                    <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8a4 4 0 100 8 4 4 0 000-8zm0-6v2m0 16v2m8.66-14.66l-1.41 1.41M4.75 19.25l-1.41 1.41m0-16.91l1.41 1.41m14.5 14.5l1.41 1.41M22 12h-2M4 12H2"></path></svg>
+                    <span :class="sidebarCollapsed ? 'hidden' : 'inline'">Settings</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'manage_organization' %}" class="group nav-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition duration-150 {% if current == 'manage_organization' %}bg-sky-500/20 text-sky-200{% else %}text-slate-200 hover:bg-slate-800 hover:text-sky-200{% endif %}"
+                   :class="sidebarCollapsed ? 'mx-auto h-10 w-10 justify-center gap-0 px-0 py-0' : ''">
+                    <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h6M9 14h6"></path></svg>
+                    <span :class="sidebarCollapsed ? 'hidden' : 'inline'">Organization</span>
+                </a>
+            </li>
+            <li class="pt-2">
+                <a href="{% url 'logout' %}" class="group nav-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-300 transition duration-150 hover:bg-red-900/40"
+                   :class="sidebarCollapsed ? 'mx-auto h-10 w-10 justify-center gap-0 px-0 py-0' : ''">
+                    <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H9m4 8H7a2 2 0 01-2-2V6a2 2 0 012-2h6"></path></svg>
+                    <span :class="sidebarCollapsed ? 'hidden' : 'inline'">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="w-full border-b border-slate-700 bg-black shadow-sm md:hidden" x-data="{ open: false }">
+    <div class="flex items-center justify-between p-4">
+        <h2 class="text-xl font-bold text-white">QRTendify</h2>
+        <button @click="open = !open" type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-lg p-2 text-sm text-slate-400 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-600" aria-controls="mobile-menu" aria-expanded="false">
+            <span class="sr-only">Open main menu</span>
+            <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
+            </svg>
+        </button>
+    </div>
+    <div x-show="open" x-cloak @click.outside="open = false" id="mobile-menu" class="space-y-1 border-t border-slate-700 px-2 pb-3 pt-2">
+        <a href="{% url 'dashboard' %}" class="block rounded-md px-3 py-2 text-base font-medium {% if current == 'dashboard' %}bg-sky-500/20 text-sky-200{% else %}text-slate-200 hover:bg-slate-700{% endif %}">Dashboard</a>
+        <a href="{% url 'session_list' %}" class="block rounded-md px-3 py-2 text-base font-medium {% if current == 'session_list' %}bg-sky-500/20 text-sky-200{% else %}text-slate-200 hover:bg-slate-700{% endif %}">Sessions</a>
+        <a href="{% url 'create_session' %}" class="block rounded-md px-3 py-2 text-base font-medium {% if current == 'create_session' %}bg-sky-500/20 text-sky-200{% else %}text-slate-200 hover:bg-slate-700{% endif %}">Create Session</a>
+        <a href="{% url 'reports' %}" class="block rounded-md px-3 py-2 text-base font-medium {% if current == 'reports' %}bg-sky-500/20 text-sky-200{% else %}text-slate-200 hover:bg-slate-700{% endif %}">Reports</a>
+        <a href="{% url 'certificate_list' %}" class="block rounded-md px-3 py-2 text-base font-medium {% if current == 'certificate_list' %}bg-sky-500/20 text-sky-200{% else %}text-slate-200 hover:bg-slate-700{% endif %}">Certificates</a>
+        <a href="{% url 'settings' %}" class="block rounded-md px-3 py-2 text-base font-medium {% if current == 'settings' %}bg-sky-500/20 text-sky-200{% else %}text-slate-200 hover:bg-slate-700{% endif %}">Settings</a>
+        <a href="{% url 'manage_organization' %}" class="block rounded-md px-3 py-2 text-base font-medium {% if current == 'manage_organization' %}bg-sky-500/20 text-sky-200{% else %}text-slate-200 hover:bg-slate-700{% endif %}">Manage Organization</a>
+        <a href="{% url 'logout' %}" class="block rounded-md px-3 py-2 text-base font-medium text-red-300 hover:bg-red-900/40">Logout</a>
+    </div>
+</div>
+{% endwith %}

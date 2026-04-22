@@ -1,0 +1,209 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "flowbite";
+
+@layer base {
+  :root {
+    --app-primary: #1a73e8;
+    --app-primary-strong: #1557b0;
+    --app-danger: #dc2626;
+    --app-success: #16a34a;
+    --app-warning: #d97706;
+    --app-text: #0f172a;
+    --app-muted: #64748b;
+    --app-border: #e2e8f0;
+    --app-surface: #ffffff;
+    --app-surface-soft: #f2f2f6;
+    --app-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    --app-radius: 0.875rem;
+    --app-control-bg: #ffffff;
+    --app-control-border: #cbd5e1;
+    --app-control-accent: #0ea5e9;
+    --app-control-icon: #475569;
+    --app-control-height: 2.75rem;
+  }
+
+  body {
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--app-text);
+    background: var(--app-surface-soft);
+  }
+
+  [x-cloak] {
+    display: none !important;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus,
+  button:focus-visible {
+    --tw-ring-color: var(--app-primary) !important;
+    border-color: var(--app-primary) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.18) !important;
+  }
+
+  input::placeholder,
+  textarea::placeholder,
+  input::-moz-placeholder,
+  textarea::-moz-placeholder {
+    color: #94a3b8 !important;
+    opacity: 1 !important;
+  }
+
+  /* Global personality for dropdown/date/time controls */
+  select,
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"] {
+    appearance: none;
+    background-color: var(--app-control-bg);
+    border-color: var(--app-control-border);
+    border-radius: 0.75rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 1px 2px rgba(15, 23, 42, 0.04);
+    color: #0f172a;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    min-height: var(--app-control-height);
+  }
+
+  select:hover,
+  input[type="date"]:hover,
+  input[type="time"]:hover,
+  input[type="datetime-local"]:hover {
+    border-color: #94a3b8;
+    background-color: #fcfdff;
+  }
+
+  select {
+    background-image:
+      linear-gradient(135deg, rgba(14, 165, 233, 0.08), rgba(26, 115, 232, 0.04)),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M6 8l4 4 4-4' stroke='%23475569' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat, no-repeat;
+    background-position: 0 0, right 0.75rem center;
+    background-size: 100% 100%, 1rem 1rem;
+    padding-right: 2.5rem !important;
+  }
+
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"] {
+    background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.08), rgba(26, 115, 232, 0.04));
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator,
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.85;
+    filter: invert(33%) sepia(10%) saturate(900%) hue-rotate(173deg) brightness(90%) contrast(89%);
+  }
+
+  input[type="date"]::-webkit-datetime-edit,
+  input[type="time"]::-webkit-datetime-edit,
+  input[type="datetime-local"]::-webkit-datetime-edit {
+    color: #0f172a;
+  }
+}
+
+@layer components {
+  .app-shell {
+    @apply min-h-screen px-4 py-8 md:px-6 md:py-12;
+  }
+
+  .app-shell-centered {
+    @apply app-shell flex items-center justify-center;
+  }
+
+  .app-card {
+    @apply w-full rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8;
+    box-shadow: var(--app-shadow);
+  }
+
+  .app-title {
+    @apply text-2xl font-bold tracking-tight text-slate-900 md:text-3xl;
+  }
+
+  .app-subtitle {
+    @apply mt-2 text-sm text-slate-600;
+  }
+
+  .app-input {
+    @apply block w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 transition-colors duration-150 placeholder:text-slate-400;
+    min-height: var(--app-control-height);
+  }
+
+  .app-input[type="date"],
+  .app-input[type="time"],
+  .app-input[type="datetime-local"] {
+    background-color: #ffffff;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M6 8l4 4 4-4' stroke='%23475569' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat, no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem 1rem;
+    padding-right: 2.5rem !important;
+  }
+
+  .app-input[type="date"]:hover,
+  .app-input[type="time"]:hover,
+  .app-input[type="datetime-local"]:hover,
+  .app-input[type="date"]:focus,
+  .app-input[type="time"]:focus,
+  .app-input[type="datetime-local"]:focus {
+    background-color: #ffffff !important;
+  }
+
+  .app-input[type="date"]::-webkit-calendar-picker-indicator,
+  .app-input[type="time"]::-webkit-calendar-picker-indicator,
+  .app-input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    opacity: 0.01;
+    width: 2.25rem;
+    cursor: pointer;
+  }
+
+  .app-label {
+    @apply mb-1.5 block text-sm font-medium text-slate-700;
+  }
+
+  .app-btn {
+    @apply inline-flex items-center justify-center rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors duration-150;
+    min-height: var(--app-control-height);
+  }
+
+  .app-btn-primary {
+    @apply app-btn border-transparent text-white;
+    background: linear-gradient(135deg, #1a73e8, #0ea5e9);
+  }
+
+  .app-btn-primary:hover {
+    background: linear-gradient(135deg, #1557b0, #0284c7);
+  }
+
+  .app-btn-secondary {
+    @apply app-btn border-slate-300 bg-white text-slate-700 hover:bg-slate-50;
+  }
+
+  .app-btn-danger {
+    @apply app-btn border-transparent bg-red-600 text-white hover:bg-red-700;
+  }
+
+  .app-alert {
+    @apply rounded-xl border px-4 py-3 text-sm;
+  }
+
+  .app-alert-danger {
+    @apply app-alert border-red-200 bg-red-50 text-red-800;
+  }
+
+  .app-alert-success {
+    @apply app-alert border-emerald-200 bg-emerald-50 text-emerald-800;
+  }
+
+  .app-alert-info {
+    @apply app-alert border-sky-200 bg-sky-50 text-sky-800;
+  }
+}

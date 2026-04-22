@@ -1,0 +1,216 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Code Entry - QRTendify</title>
+
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+        
+        /* Custom styles for pin input */
+        .pin-input {
+            width: 3rem;
+            height: 3rem;
+            text-align: center;
+            font-size: 1.125rem;
+            font-weight: 600;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen bg-gray-50">
+    <div class="max-w-md w-full mx-4">
+        <!-- Main Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <!-- Header -->
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mx-auto mb-3">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"></path>
+                    </svg>
+                </div>
+                
+                <h2 class="text-xl font-bold text-gray-800 mb-2">Manual Code Entry</h2>
+                <p class="text-sm text-gray-600">Enter the 4-digit code provided by the organizer</p>
+            </div>
+
+            <!-- Alert Messages -->
+            {% if error_message %}
+            <div class="mb-4 p-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200 flex items-start">
+                <svg class="w-5 h-5 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
+                </svg>
+                <span>{{ error_message }}</span>
+            </div>
+            {% endif %}
+
+            {% if success_message %}
+            <div class="mb-4 p-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200 flex items-start">
+                <svg class="w-5 h-5 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>{{ success_message }}</span>
+            </div>
+            {% endif %}
+            
+            <!-- Code Entry Form -->
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+                
+                <!-- Hidden field to store the complete code -->
+                <input type="hidden" name="code" id="complete-code" required>
+                
+                <!-- Pin Code Input -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3 text-center">Verification Code</label>
+                    <div class="flex justify-center space-x-3">
+                        <div>
+                            <label for="code-1" class="sr-only">First digit</label>
+                            <input type="text" maxlength="1" data-focus-input-init data-focus-input-next="code-2" 
+                                   id="code-1" class="pin-input block bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm" 
+                                   required inputmode="numeric" pattern="[0-9]" />
+                        </div>
+                        <div>
+                            <label for="code-2" class="sr-only">Second digit</label>
+                            <input type="text" maxlength="1" data-focus-input-prev="code-1" data-focus-input-next="code-3" 
+                                   id="code-2" class="pin-input block bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm" 
+                                   required inputmode="numeric" pattern="[0-9]" />
+                        </div>
+                        <div>
+                            <label for="code-3" class="sr-only">Third digit</label>
+                            <input type="text" maxlength="1" data-focus-input-prev="code-2" data-focus-input-next="code-4" 
+                                   id="code-3" class="pin-input block bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm" 
+                                   required inputmode="numeric" pattern="[0-9]" />
+                        </div>
+                        <div>
+                            <label for="code-4" class="sr-only">Fourth digit</label>
+                            <input type="text" maxlength="1" data-focus-input-prev="code-3" 
+                                   id="code-4" class="pin-input block bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm" 
+                                   required inputmode="numeric" pattern="[0-9]" />
+                        </div>
+                    </div>
+                    <p class="mt-2 text-xs text-gray-500 text-center">Enter the 4-digit code shown by the organizer</p>
+                </div>
+                
+                <!-- Submit Button -->
+                <button type="submit" 
+                        id="submit-btn"
+                        class="w-full flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-colors duration-200">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    Find Session
+                </button>
+                
+                <!-- Alternative Options -->
+                <div class="text-center pt-4 border-t border-gray-200">
+                    <p class="text-xs text-gray-600">
+                        Have a QR code? 
+                        <a href="{% url 'attendance_form' %}" class="text-primary hover:underline font-medium">
+                            Scan QR code instead
+                        </a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const pinInputs = document.querySelectorAll('input[type="text"][id^="code-"]');
+            const completeCodeInput = document.getElementById('complete-code');
+            const submitBtn = document.getElementById('submit-btn');
+            
+            // Initialize first input focus
+            const firstInput = document.getElementById('code-1');
+            if (firstInput) {
+                firstInput.focus();
+            }
+            
+            // Add event listeners to each pin input
+            pinInputs.forEach((input, index) => {
+                input.addEventListener('input', function(e) {
+                    // Allow only numbers
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                    
+                    // Auto-advance to next input
+                    if (this.value.length === 1) {
+                        const nextInput = this.getAttribute('data-focus-input-next');
+                        if (nextInput) {
+                            document.getElementById(nextInput).focus();
+                        }
+                    }
+                    
+                    updateCompleteCode();
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    // Handle backspace
+                    if (e.key === 'Backspace' && this.value === '') {
+                        const prevInput = this.getAttribute('data-focus-input-prev');
+                        if (prevInput) {
+                            document.getElementById(prevInput).focus();
+                        }
+                    }
+                    
+                    // Handle paste
+                    if (e.key === 'v' && (e.ctrlKey || e.metaKey)) {
+                        setTimeout(() => {
+                            handlePaste(this, e);
+                        }, 10);
+                    }
+                });
+                
+                input.addEventListener('paste', handlePaste);
+            });
+            
+            function updateCompleteCode() {
+                let code = '';
+                pinInputs.forEach(input => {
+                    code += input.value;
+                });
+                completeCodeInput.value = code;
+                
+                // Enable/disable submit button based on complete code
+                submitBtn.disabled = code.length !== 4;
+            }
+            
+            function handlePaste(input, e) {
+                e.preventDefault();
+                const pasteData = e.clipboardData.getData('text');
+                const numbers = pasteData.replace(/[^0-9]/g, '').substring(0, 4);
+                
+                // Fill the inputs with pasted numbers
+                numbers.split('').forEach((num, index) => {
+                    if (pinInputs[index]) {
+                        pinInputs[index].value = num;
+                    }
+                });
+                
+                // Focus the next empty input or the last one
+                const nextEmptyIndex = numbers.length < 4 ? numbers.length : 3;
+                if (pinInputs[nextEmptyIndex]) {
+                    pinInputs[nextEmptyIndex].focus();
+                }
+                
+                updateCompleteCode();
+            }
+            
+            // Initialize button state
+            updateCompleteCode();
+        });
+    </script>
+</body>
+</html>

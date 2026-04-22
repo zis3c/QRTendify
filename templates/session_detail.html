@@ -1,0 +1,533 @@
+{% extends "dashboard_base.html" %}
+{% load widget_tweaks %}
+
+{% block dashboard_content %}
+<!-- Fixed Syntax v5 (TXT) -->
+<div class="space-y-4">
+    <!-- Messages Display -->
+    {% if messages %}
+    <div class="space-y-2">
+        {% for message in messages %}
+        <div class="{% if message.tags == 'success' %}bg-green-100 border-green-400 text-green-800{% elif message.tags == 'error' %}bg-red-100 border-red-400 text-red-800{% else %}bg-blue-100 border-blue-400 text-blue-800{% endif %} border px-4 py-3 rounded-lg relative"
+            role="alert">
+            <span class="block sm:inline">{{ message }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Compact Header -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between">
+            <div class="flex items-center mb-2 md:mb-0">
+                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">{{ session.title }}</h2>
+                    <p class="text-sm text-gray-600 truncate max-w-md">{{ session.description }}</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                    {% if session.status|lower == 'open' %}bg-green-100 text-green-800{% endif %}
+                    {% if session.status|lower == 'closed' %}bg-red-100 text-red-800{% endif %}
+                    {% if session.status|lower == 'scheduled' %}bg-yellow-100 text-yellow-800{% endif %}">
+                    {{ session.status }}
+                </span>
+
+                <div class="flex space-x-1">
+                    <a href="{% url 'session_edit' pk=session.pk %}"
+                        class="inline-flex items-center p-2 text-sm font-medium rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors duration-150"
+                        title="Edit Settings">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                            </path>
+                        </svg>
+                    </a>
+
+                    <form method="POST" class="inline-block">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="open">
+                        <button type="submit"
+                            class="inline-flex items-center p-2 text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                            {% if session.status == 'Open' %}disabled{% endif %} title="Open Session">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </button>
+                    </form>
+
+                    <form method="POST" class="inline-block">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="close">
+                        <button type="submit"
+                            class="inline-flex items-center p-2 text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                            {% if session.status == 'Closed' %}disabled{% endif %} title="Close Session">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Equal Height Main Content Grid -->
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 items-stretch">
+        <!-- Left Column: QR Code and Manual Add -->
+        <div class="xl:col-span-1 flex flex-col space-y-4">
+            <!-- QR Code Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex-1">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-semibold text-gray-800">Attendance Code</h3>
+                    {% if session_setting.is_dynamic_qr %}
+                    <span
+                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+                        Dynamic
+                    </span>
+                    {% else %}
+                    <span
+                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                        Static
+                    </span>
+                    {% endif %}
+                </div>
+
+                <div class="flex flex-col items-center space-y-3 h-full justify-center">
+                    {% if session_setting.is_dynamic_qr %}
+                    <canvas id="qr-canvas" width="160" height="160" class="border border-gray-300 rounded-lg"></canvas>
+                    <p id="qr-timer" class="text-xs text-gray-600 font-medium">Loading...</p>
+                    {% else %}
+                    <img src="{{ qr_data_uri }}" alt="QR Code" width="160" height="160"
+                        class="border border-gray-300 rounded-lg">
+                    {% endif %}
+
+                    <div class="text-center w-full">
+                        <p class="text-xs text-gray-500 mb-1">Manual Code</p>
+                        <h2 id="manual-code" class="text-2xl font-bold text-blue-600">
+                            {% if session_setting.is_dynamic_qr %}
+                            ....
+                            {% else %}
+                            #{{ attendance_code.verification_number }}
+                            {% endif %}
+                        </h2>
+                    </div>
+
+                    <!-- Static QR URL Link -->
+                    {% if not session_setting.is_dynamic_qr and static_qr_url %}
+                    <div class="text-center w-full mt-2">
+                        <p class="text-xs text-gray-700 mb-1">
+                            <strong>Link:</strong>
+                        </p>
+                        <a href="{{ static_qr_url }}" class="break-words text-xs text-blue-500 hover:underline"
+                            target="_blank">
+                            {{ static_qr_url|truncatechars:40 }}
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Quick Add Attendee -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                <h3 class="text-sm font-semibold text-gray-800 mb-3">Quick Add Attendee</h3>
+
+                <form method="POST" class="space-y-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_manual">
+
+                    <div>
+                        <input type="text" name="name" id="id_name" required
+                            class="w-full p-2 text-sm border border-gray-300 rounded-lg" placeholder="Full name">
+                    </div>
+                    <div>
+                        <input type="email" name="email" id="id_email" required
+                            class="w-full p-2 text-sm border border-gray-300 rounded-lg" placeholder="Email address">
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors duration-150">
+                        Add Attendee
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Column: Attendance List -->
+        <div class="xl:col-span-2">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 h-full flex flex-col">
+                <div class="px-4 py-3 border-b border-gray-200 flex-shrink-0">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <h3 class="text-sm font-semibold text-gray-800">Live Attendance</h3>
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                id="attendee-count">{{ attendees.count }}</span>
+                        </div>
+
+                        <div class="flex items-center space-x-2 text-xs text-gray-500">
+                            <span>{{ session.start_time|date:"M j, H:i" }} - {{ session.end_time|date:"H:i" }}</span>
+                            <button id="refresh-attendees"
+                                class="p-1 hover:bg-gray-100 rounded transition-colors duration-150" title="Refresh">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-hidden">
+                    <div class="h-full overflow-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50 sticky top-0 z-10">
+                                <tr>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">#</th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Name
+                                    </th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email
+                                    </th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Time
+                                    </th>
+                                    {% if session_setting.is_location_required %}
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Location
+                                    </th>
+                                    {% endif %}
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendee-table-body" class="bg-white divide-y divide-gray-200">
+                                {% for record in attendees %}
+                                <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                    <td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{{ forloop.counter }}</td>
+                                    <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                                        <div class="flex items-center">
+                                            <div
+                                                class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                                                <span class="text-xs font-medium text-blue-600">
+                                                    {{ record.user.first_name|first }}{{ record.user.last_name|first }}
+                                                </span>
+                                            </div>
+                                            <span class="truncate max-w-24">{{ record.user.first_name }} {{ record.user.last_name }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 truncate max-w-32">{{ record.user.email }}</td>
+                                    <td class="px-3 py-2 whitespace-nowrap text-xs text-gray-500">{{ record.check_in_time|date:"H:i" }}</td>
+
+                                    {% if session_setting.is_location_required %}
+                                    <td class="px-3 py-2 whitespace-nowrap text-xs">
+                                        {% if record.devicelog and record.devicelog.latitude is not None %}
+                                        <a href="https://maps.google.com/?q={{ record.devicelog.latitude|floatformat:6 }},{{ record.devicelog.longitude|floatformat:6 }}"
+                                            target="_blank" class="text-blue-600 hover:text-blue-800"
+                                            title="View on map">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                                </path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
+                                        </a>
+                                        {% else %}
+                                        <span class="text-gray-400">—</span>
+                                        {% endif %}
+                                    </td>
+                                    {% endif %}
+
+                                    <td class="px-3 py-2 whitespace-nowrap text-sm">
+                                        <form method="POST" onsubmit="return confirm('Remove this attendee?');"
+                                            class="inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="remove_attendee">
+                                            <input type="hidden" name="record_id" value="{{ record.id }}">
+                                            <button type="submit"
+                                                class="text-red-600 hover:text-red-800 p-1 rounded transition-colors duration-150"
+                                                title="Remove">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                    </path>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="{% if session_setting.is_location_required %}6{% else %}5{% endif %}"
+                                        class="px-3 py-12 text-center h-full">
+                                        <svg class="mx-auto h-8 w-8 text-gray-400 mb-2" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                            </path>
+                                        </svg>
+                                        <p class="text-sm text-gray-500">No attendees yet</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Certificate Management Link -->
+    <div class="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-sm border border-blue-200 p-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z">
+                        </path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Certificate Management</h3>
+                    <p class="text-sm text-gray-600">Upload and configure certificate templates with visual preview</p>
+                </div>
+            </div>
+            <a href="{% url 'certificate_detail' session.pk %}"
+                class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                    </path>
+                </svg>
+                Manage Certificates
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% if session_setting.is_dynamic_qr or True %}
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script>
+    window.onload = () => {
+        // --- DYNAMIC QR CODE & TIMER SCRIPT ---
+        const isDynamic = {{ session_setting.is_dynamic_qr| yesno: "true,false"
+    }};
+    const canvas = document.getElementById('qr-canvas');
+
+    if (isDynamic && canvas) {
+        const timerEl = document.getElementById('qr-timer');
+        const manualCodeEl = document.getElementById('manual-code');
+        const apiUrl = `{% url 'api_generate_token' pk=session.pk %}`;
+        const attendanceUrlBase = `{{ request.scheme }}://{{ request.get_host }}{% url 'attendance_form' %}`;
+        let timerInterval;
+
+        function renderQR(token, expiresAt, manualCode) {
+            const qrDataUrl = `${attendanceUrlBase}?token=${token}`;
+            if (typeof QRCode === 'undefined') {
+                if (timerEl) timerEl.textContent = 'Error: QR library failed to load.';
+                return;
+            }
+
+            QRCode.toCanvas(canvas, qrDataUrl, {
+                width: 160,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            }, (error) => {
+                if (error) console.error(error);
+            });
+
+            if (manualCodeEl) manualCodeEl.textContent = `#${manualCode}`;
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                const now = new Date();
+                const secondsLeft = Math.round((new Date(expiresAt) - now) / 1000);
+
+                if (secondsLeft <= 0) {
+                    if (timerEl) timerEl.textContent = 'Refreshing...';
+                    clearInterval(timerInterval);
+                    sessionStorage.removeItem('qrToken');
+                    sessionStorage.removeItem('qrExpiresAt');
+                    sessionStorage.removeItem('qrManualCode');
+                    fetchAndRenderQR();
+                } else {
+                    if (timerEl) timerEl.textContent = `Refreshes in ${secondsLeft}s`;
+                }
+            }, 1000);
+        }
+
+        async function fetchAndRenderQR() {
+            try {
+                let storedToken = sessionStorage.getItem('qrToken');
+                let storedExpiresAt = sessionStorage.getItem('qrExpiresAt');
+                let storedManualCode = sessionStorage.getItem('qrManualCode');
+
+                if (storedToken && storedExpiresAt && storedManualCode && new Date(storedExpiresAt) > new Date()) {
+                    renderQR(storedToken, storedExpiresAt, storedManualCode);
+                    return;
+                }
+
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error('Failed to fetch token');
+
+                const data = await response.json();
+
+                sessionStorage.setItem('qrToken', data.token);
+                sessionStorage.setItem('qrExpiresAt', data.expires_at);
+                sessionStorage.setItem('qrManualCode', data.manual_code);
+
+                renderQR(data.token, data.expires_at, data.manual_code);
+
+            } catch (err) {
+                console.error("Dynamic QR Error:", err);
+                if (timerEl) timerEl.textContent = 'Error loading QR. Retrying...';
+                setTimeout(fetchAndRenderQR, 3000);
+            }
+        }
+        fetchAndRenderQR();
+    }
+
+    // --- ADAPTIVE POLLING SCRIPT ---
+    const attendeeTableBody = document.getElementById('attendee-table-body');
+    const attendeeCountEl = document.getElementById('attendee-count');
+    const refreshButton = document.getElementById('refresh-attendees');
+    const statusApiUrl = `{% url 'api_get_attendance_status' pk=session.pk %}`;
+    const fullListApiUrl = `{% url 'api_get_attendees' pk=session.pk %}`;
+
+    let currentAttendeeCount = parseInt(attendeeCountEl.textContent, 10);
+    let lastNewSubmissionTime = Date.now();
+    let pollingInterval;
+
+    function createAttendeeRow(record, isLocationRequired) {
+        let locationCell = '';
+
+        if (isLocationRequired) {
+            let locationContent = `<span class="text-gray-400">—</span>`;
+
+            if (record.google_maps_url && record.google_maps_url !== "" && record.location !== "N/A") {
+                locationContent = `
+                        <a href="${record.google_maps_url}" target="_blank" class="text-blue-600 hover:text-blue-800" title="View on map">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </a>`;
+            }
+
+            locationCell = `<td class="px-3 py-2 whitespace-nowrap text-xs">${locationContent}</td>`;
+        }
+
+        return `
+                <tr class="hover:bg-gray-50 transition-colors duration-150">
+                    <td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">${record.count}</td>
+                    <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                        <div class="flex items-center">
+                            <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                                <span class="text-xs font-medium text-blue-600">
+                                    ${record.full_name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                                </span>
+                            </div>
+                            <span class="truncate max-w-24">${record.full_name}</span>
+                        </div>
+                    </td>
+                    <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 truncate max-w-32">${record.email}</td>
+                    <td class="px-3 py-2 whitespace-nowrap text-xs text-gray-500">${record.check_in_time.split(',')[1] || record.check_in_time}</td>
+                    ${locationCell}
+                    <td class="px-3 py-2 whitespace-nowrap text-sm">
+                        <form method="POST" onsubmit="return confirm('Remove this attendee?');" class="inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="remove_attendee">
+                            <input type="hidden" name="record_id" value="${record.id}">
+                            <button type="submit" class="text-red-600 hover:text-red-800 p-1 rounded transition-colors duration-150" title="Remove">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            `;
+    }
+
+    async function fetchAndUpdateAttendees() {
+        try {
+            const response = await fetch(fullListApiUrl);
+            const data = await response.json();
+
+            currentAttendeeCount = data.attendees.length;
+            attendeeCountEl.textContent = currentAttendeeCount;
+
+            const colspan = data.is_location_required ? 6 : 5;
+
+            if (data.attendees.length === 0) {
+                attendeeTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="${colspan}" class="px-3 py-12 text-center h-full">
+                                <svg class="mx-auto h-8 w-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <p class="text-sm text-gray-500">No attendees yet</p>
+                            </td>
+                        </tr>
+                    `;
+            } else {
+                let newTableBody = '';
+                data.attendees.forEach(record => {
+                    newTableBody += createAttendeeRow(record, data.is_location_required);
+                });
+                attendeeTableBody.innerHTML = newTableBody;
+            }
+        } catch (err) {
+            console.error('Error fetching full attendee list:', err);
+        }
+    }
+
+    async function checkAttendanceStatus() {
+        try {
+            const response = await fetch(statusApiUrl);
+            const data = await response.json();
+
+            if (data.attendee_count > currentAttendeeCount) {
+                lastNewSubmissionTime = Date.now();
+                fetchAndUpdateAttendees();
+            } else {
+                if (Date.now() - lastNewSubmissionTime > 120000) {
+                    clearInterval(pollingInterval);
+                    console.log('Polling paused due to inactivity.');
+                }
+            }
+        } catch (err) {
+            console.error('Error polling status:', err);
+            clearInterval(pollingInterval);
+        }
+    }
+
+    refreshButton.addEventListener('click', fetchAndUpdateAttendees);
+    pollingInterval = setInterval(checkAttendanceStatus, 5000);
+    };
+</script>
+{% endblock %}
+{% endif %}
