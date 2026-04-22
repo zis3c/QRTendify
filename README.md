@@ -24,8 +24,8 @@ Attendance and session management platform built with Django + Tailwind.
 
 1. **Clone repository**
    ```bash
-   git clone <your-repo-url>
-   cd Qrtendify
+   git clone https://github.com/zis3c/QRTendify.git
+   cd QRTendify
    ```
 
 2. **Install backend dependencies**
@@ -90,7 +90,7 @@ npm run watch:css
 
 ## Contributing
 
-Contributions are very welcome—especially for bug fixes.
+Contributions are very welcome, especially for bug fixes.
 
 Priority areas:
 - Sidebar behavior and visual glitches
