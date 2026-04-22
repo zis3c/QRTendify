@@ -6,6 +6,10 @@ __pycache__/
 *.egg-info/
 *.sqlite3
 db.sqlite3
+.sqlite3
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
 .env
 .env.*
 !.env.example
@@ -35,8 +39,20 @@ pnpm-debug.log*
 # IDEs
 .vscode/
 .idea/
+.DS_Store
+Thumbs.db
 
 # Test artifacts & logs
 *.log
 test_output.txt
 email_preview.txt
+
+# Secrets / keys / local credentials
+*.pem
+*.key
+*.crt
+*.pfx
+*.p12
+secrets.*
+credentials.*
+*.secret

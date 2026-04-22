@@ -1,72 +1,123 @@
 # QRTendify
-Smart attendance and session management with Django + Tailwind.
 
-## ⚠️ Current Project Status
-This project is **working**, but it still has **many bugs and UI inconsistencies**.
+![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
+![Django](https://img.shields.io/badge/Django-5.x-092E20?logo=django&logoColor=white)
+![Tailwind](https://img.shields.io/badge/TailwindCSS-3.x-06B6D4?logo=tailwindcss&logoColor=white)
+![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
+![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)
 
-If you like fixing real-world issues and improving developer experience, your help is very welcome.
+Attendance and session management platform built with Django + Tailwind.
 
-## Why This Exists
-- Build session-based attendance flows
-- Support role-based organization workflows
-- Generate reports and certificate-related workflows
-- Keep the UI modern and practical for everyday use
+> [!WARNING]
+> This project is **working**, but still has **many bugs and UI inconsistencies**.  
+> Contributions are strongly welcomed to help stabilize and improve it.
 
-## Tech Stack
-- Python / Django
-- SQLite (default local DB)
-- Tailwind CSS
-- Alpine.js (UI interactions)
+## Features
 
-## Quick Start (Windows / PowerShell)
-```powershell
-python -m venv .venv
-.venv\Scripts\python -m pip install -U pip
-.venv\Scripts\python -m pip install -r requirements-dev.txt
+- 📅 Session creation and management
+- 👥 Organization/member based access flows
+- 🧾 Attendance tracking and reports
+- 🏅 Certificate workflow pages
+- 🎨 Ongoing global UI consistency improvements
 
-Copy-Item .env.example .env
-.venv\Scripts\python manage.py migrate
-npm ci
-npm run build:css
+## Installation
+
+1. **Clone repository**
+   ```bash
+   git clone <your-repo-url>
+   cd Qrtendify
+   ```
+
+2. **Install backend dependencies**
+   ```bash
+   python -m venv .venv
+   .venv\Scripts\python -m pip install -U pip
+   .venv\Scripts\python -m pip install -r requirements-dev.txt
+   ```
+
+3. **Configure environment**
+   ```bash
+   copy .env.example .env
+   ```
+
+4. **Install frontend dependencies**
+   ```bash
+   npm ci
+   npm run build:css
+   ```
+
+5. **Run app**
+   ```bash
+   .venv\Scripts\python manage.py migrate
+   .venv\Scripts\python manage.py runserver
+   ```
+
+## Project Structure
+
+```text
+Qrtendify/
+├── QRTendify_project/        # Django project settings and urls
+├── core/                     # Main app logic (models/views/forms/services)
+├── templates/                # Django templates
+├── static/                   # Tailwind source, built CSS, JS, assets
+├── scripts/                  # Utility / smoke scripts
+├── requirements*.txt         # Python dependencies
+├── package.json              # Frontend toolchain config
+└── README.md                 # Project documentation
+```
+
+## Usage
+
+### Run development server
+```bash
 .venv\Scripts\python manage.py runserver
 ```
 
-## Development Commands
-```powershell
-# Build Tailwind once
+### Build Tailwind CSS
+```bash
 npm run build:css
+```
 
-# Watch Tailwind
+### Watch Tailwind CSS
+```bash
 npm run watch:css
+```
 
-# Django checks
+### Basic project checks
+```bash
 .venv\Scripts\python manage.py check
 ```
 
-## Contributing (Please!)
-Contributions are encouraged, especially for:
-- UI consistency fixes
-- Sidebar and layout edge cases
-- Form/placeholder styling consistency
-- Session creation UX bugs
-- Regression tests for critical flows
+## Contributing
 
-### Suggested Contribution Flow
+Contributions are very welcome—especially for bug fixes.
+
+Priority areas:
+- Sidebar behavior and visual glitches
+- Form control consistency (placeholder, focus, sizing)
+- Session creation UI/UX edge cases
+- Regression testing for critical flows
+
+### Suggested PR flow
 1. Create a branch from `main`
-2. Keep PRs focused and small
-3. Include before/after screenshots for UI fixes
-4. Add test coverage where possible
-5. Open a PR with clear reproduction steps
+2. Keep PR scope focused
+3. Include reproduction + fix notes
+4. Attach before/after UI screenshots if relevant
+
+## Contributors
+
+Special shoutout to **Idham** and **Koden**. Jangan malas, fix this QRTendify lah
 
 ## Security Notes
-- Never commit `.env` or secret keys
-- Keep credentials in environment variables only
-- Review staged files before every push:
-```powershell
-git status
-git diff --staged
-```
 
----
-Built with momentum, still evolving.  
-If it breaks, let’s fix it together 💙
+- Never commit `.env` or credentials
+- Keep API keys/secrets in environment variables only
+- Review staged files before push:
+  ```bash
+  git status
+  git diff --staged
+  ```
+
+## License
+
+License is currently **not specified** in this repository.
